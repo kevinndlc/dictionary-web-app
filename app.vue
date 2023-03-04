@@ -43,7 +43,7 @@ const { data, pending } = useLazyFetch<Word[] | NoDefinitionFound>(
 );
 
 const wordPronounciationAudio = computed(() => {
-  if (data.value) {
+  if (data.value && Array.isArray(data.value)) {
     return data.value[0].phonetics.find((phonetic) => phonetic.audio !== '')
       ?.audio;
   }
