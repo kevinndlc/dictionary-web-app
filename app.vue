@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const selectedFont: any = useState('selectedFont');
 
-const searchText = ref('keyboard');
+const searchText = ref(useLocalStorage('searchText', 'keyboard'));
 const debouncedSearchText = useDebounce(searchText, 800);
 
 interface Word {
@@ -28,19 +28,10 @@ interface Phonetic {
   audio: string;
 }
 
-interface NoDefinitionFound {
-  title: string;
-  message: string;
-  resolution: string;
-}
-
-const { data, pending } = useLazyFetch<Word[] | NoDefinitionFound>(
-  debouncedSearchText,
-  {
-    baseURL: 'https://api.dictionaryapi.dev/api/v2/entries/en/',
-    onResponse: ({ response }) => console.log(response._data),
-  }
-);
+const { data, error } = useLazyFetch<Word[]>(debouncedSearchText, {
+  baseURL: 'https://api.dictionaryapi.dev/api/v2/entries/en/',
+  onResponse: ({ response }) => console.log(response._data),
+});
 
 const wordPronounciationAudio = computed(() => {
   if (data.value && Array.isArray(data.value)) {
@@ -68,11 +59,38 @@ const wordPronounciationAudio = computed(() => {
   <div class="app-container">
     <TheHeader class="mb-6 sm:mb-[52px]" />
     <SearchBar v-model="searchText" class="mb-6 sm:mb-[50px]" />
-    <WordSummary
-      v-if="data && Array.isArray(data)"
-      :word="data[0].word"
-      :phonetic="data[0]?.phonetic"
-      :audio="wordPronounciationAudio"
+    <template v-if="data">
+      <WordSummary
+        :word="data[0].word"
+        :phonetic="data[0]?.phonetic"
+        :audio="wordPronounciationAudio"
+        class="mb-8 sm:mb-[42px]"
+      />
+
+      <ul class="space-y-8 sm:space-y-10 mb-8 sm:mb-10">
+        <li v-for="meaning in data[0].meanings" :key="meaning.partOfSpeech">
+          <WordMeaning
+            :part-of-speech="meaning.partOfSpeech"
+            :definitions="meaning.definitions.map((def) => def.definition)"
+            :synonyms="meaning.synonyms"
+            @newSearch="searchText = $event"
+          />
+        </li>
+      </ul>
+
+      <hr class="border-gray-300 dark:border-gray-700" />
+      <div class="flex flex-col sm:flex-row gap-2 sm:gap-[25px] mt-6">
+        <span class="text-sm underline text-gray-500">Source</span>
+        <a :href="data[0].sourceUrls[0]" target="_blank">{{
+          data[0].sourceUrls[0]
+        }}</a>
+      </div>
+    </template>
+    <NoDefinitionFound
+      v-else-if="error?.data?.title"
+      :title="error.data.title"
+      :message="error.data.message"
+      :resolution="error.data.resolution"
     />
   </div>
 </template>
