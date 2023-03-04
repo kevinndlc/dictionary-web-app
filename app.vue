@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const selectedFont: any = useState('selectedFont');
+</script>
+
 <template>
   <Head>
     <title>Frontend Mentor | Dictionary web app</title>
@@ -5,15 +9,25 @@
     <meta name="keywords" content="dictionary" />
     <meta name="author" content="kevinndlc" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="/favicon-32x32.png"
-    />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   </Head>
 
-  <div class="font-inter">
-    Dictionary web app
+  <Body
+    class="bg-white dark:bg-gray-1000 text-gray-800 dark:text-white transition-colors"
+    :class="selectedFont.value"
+  />
+
+  <div class="app-container">
+    <TheHeader />
   </div>
 </template>
+
+<style>
+.app-container {
+  --margin: 1.5rem;
+
+  width: min(100% - 2 * var(--margin), 46rem);
+  margin-inline: auto;
+  padding-block: var(--margin);
+}
+</style>

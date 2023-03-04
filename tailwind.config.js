@@ -1,10 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [],
+  darkMode: 'class',
   theme: {
     colors: {
       red: '#FF5252',
-      purple: 'A445ED',
+      purple: '#A445ED',
       white: '#FFFFFF',
       gray: {
         100: '#F4F4F4',
@@ -20,6 +21,9 @@ module.exports = {
       inconsolata: ['Inconsolata', 'monospace'],
       inter: ['Inter', 'sans-serif'],
       lora: ['Lora', 'serif'],
+    },
+    boxShadow: {
+      base: '0px 5px 30px rgba(0, 0, 0, 0.1);',
     },
   },
   plugins: [],
