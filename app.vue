@@ -24,10 +24,16 @@ const selectedFont: any = useState('selectedFont');
 
 <style>
 .app-container {
-  --margin: 1.5rem;
+  --margin-inline: 1.5rem;
+  --margin-block: 1.5rem;
 
-  width: min(100% - 2 * var(--margin), 46rem);
+  width: min(100% - 2 * var(--margin-inline), 46rem);
   margin-inline: auto;
-  padding-block: var(--margin);
+  padding-block: var(--margin-block);
+
+  @media screen and (min-width: 640px) {
+    --margin-inline: 2.5rem;
+    --margin-block: 58px;
+  }
 }
 </style>
