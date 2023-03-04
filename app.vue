@@ -1,5 +1,8 @@
 <script setup lang="ts">
 const selectedFont: any = useState('selectedFont');
+
+const searchText = ref('');
+const debouncedSearchText = useDebounce(searchText, 500);
 </script>
 
 <template>
@@ -14,11 +17,13 @@ const selectedFont: any = useState('selectedFont');
 
   <Body
     class="bg-white dark:bg-gray-1000 text-gray-800 dark:text-white transition-colors"
-    :class="selectedFont.value"
+    :class="selectedFont?.value ?? 'font-inter'"
   />
 
   <div class="app-container">
-    <TheHeader />
+    <TheHeader class="mb-6 sm:mb-[52px]" />
+    <SearchBar v-model="searchText" />
+    {{ debouncedSearchText }}
   </div>
 </template>
 

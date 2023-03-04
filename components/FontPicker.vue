@@ -36,7 +36,7 @@ const selectedFont = useState('selectedFont', () => fonts[0]);
       <div
         v-if="isDropdownOpen"
         id="dropdown"
-        class="absolute right-0 translate-y-[18px]"
+        class="absolute right-0 translate-y-[18px] z-10"
       >
         <ul
           class="bg-white shadow-base dark:shadow-purple dark:bg-gray-900 w-[183px] p-6 rounded-2xl space-y-4"
