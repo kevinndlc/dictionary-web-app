@@ -7,7 +7,9 @@ const fonts = [
   { name: 'Mono', value: 'font-inconsolata' },
 ];
 
-const selectedFont = useState('selectedFont', () => fonts[0]);
+const selectedFont = useState('selectedFont', () =>
+  useLocalStorage('font', fonts[0])
+);
 </script>
 
 <template>

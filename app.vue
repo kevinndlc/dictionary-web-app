@@ -1,8 +1,53 @@
 <script setup lang="ts">
 const selectedFont: any = useState('selectedFont');
 
-const searchText = ref('');
-const debouncedSearchText = useDebounce(searchText, 500);
+const searchText = ref('keyboard');
+const debouncedSearchText = useDebounce(searchText, 800);
+
+interface Word {
+  word: string;
+  meanings: Meaning[];
+  phonetic?: string;
+  phonetics: Phonetic[];
+  sourceUrls: string[];
+}
+
+interface Meaning {
+  partOfSpeech: string;
+  definitions: Definition[];
+  synonyms: string[];
+}
+
+interface Definition {
+  definition: string;
+  synonyms: string[];
+}
+
+interface Phonetic {
+  text: string;
+  audio: string;
+}
+
+interface NoDefinitionFound {
+  title: string;
+  message: string;
+  resolution: string;
+}
+
+const { data, pending } = useLazyFetch<Word[] | NoDefinitionFound>(
+  debouncedSearchText,
+  {
+    baseURL: 'https://api.dictionaryapi.dev/api/v2/entries/en/',
+    onResponse: ({ response }) => console.log(response._data),
+  }
+);
+
+const wordPronounciationAudio = computed(() => {
+  if (data.value) {
+    return data.value[0].phonetics.find((phonetic) => phonetic.audio !== '')
+      ?.audio;
+  }
+});
 </script>
 
 <template>
@@ -22,8 +67,13 @@ const debouncedSearchText = useDebounce(searchText, 500);
 
   <div class="app-container">
     <TheHeader class="mb-6 sm:mb-[52px]" />
-    <SearchBar v-model="searchText" />
-    {{ debouncedSearchText }}
+    <SearchBar v-model="searchText" class="mb-6 sm:mb-[50px]" />
+    <WordSummary
+      v-if="data && Array.isArray(data)"
+      :word="data[0].word"
+      :phonetic="data[0]?.phonetic"
+      :audio="wordPronounciationAudio"
+    />
   </div>
 </template>
 
